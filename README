@@ -1,1 +1,23 @@
-A g8 template for creating a war containing a single rest resource using scala, unfiltered, and squeryl.
+A g8 template for creating a war containing a single rest resource using scala, unfiltered, and squeryl for relational database persistence.
+
+To use this template:
+1. install g8, follow instructions at n8han/giter8
+2. g8 davececere/unfiltered-squeryl-war.g8, answer the few questions
+3. the project assumes mysql will be used. create a db schema called scalarest and run src/main/db/create.sql in that schema.
+4. if you don't use mysql or want to change the connection string/database name, edit DemoObjectService.scala (this should be moved to template var)
+
+Within interactive sbt console you can:
+1. 'eclipse' to create an eclipse project automatically for you
+2. 'container:start' or 'container:stop' to bring your webapp up/down within a jetty instance
+3. and of course the usual compile/test/etc....
+
+The generated resource, defined in DemoObjectPlan.scala is:
+1. POST representation to <host>/demoObjects for object creation
+2. GET to <host>/demoObjects for list of all demoObjects
+3. GET to <host>/demoObjects/{id} for that demoObject
+4. PUT to <host>/demoObjects/{id} to update that demoObject
+5. DELETE to <host>/demoObjects/{id} to delete that demoObject
+
+Example Representation of Provided DemoObject:
+
+{"jsonClass":"DemoObject","id":1,"name":"testobject1"}
