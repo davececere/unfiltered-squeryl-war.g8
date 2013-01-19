@@ -1,6 +1,6 @@
 organization := "com.example"
 
-name := "scalarest"
+name := "demoobject"
 
 version := "0.1.0-SNAPSHOT"
 
