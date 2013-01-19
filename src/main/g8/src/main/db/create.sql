@@ -1,0 +1,1 @@
+create table DemoObject (id int(11) NOT NULL AUTO_INCREMENT,name varchar(20), PRIMARY KEY (id));
