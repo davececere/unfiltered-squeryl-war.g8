@@ -1,4 +1,4 @@
-A g8 template for creating a war containing a single rest resource using scala, unfiltered, and squeryl for relational database persistence.
+A g8 template for creating a war containing a single rest resource using scala, unfiltered, and squeryl for relational database persistence. Now also includes a small jquery mobile app to exercise all CRUD restful methods, found at http://localhost:8080/index.HTML
 
 To use this template:
 1. install g8, follow instructions at n8han/giter8
@@ -21,3 +21,5 @@ The generated resource, defined in DemoObjectPlan.scala is:
 Example Representation of Provided DemoObject:
 
 {"jsonClass":"DemoObject","id":1,"name":"testobject1"}
+
+Go to http://localhost:8080/index.HTML after starting the container to create, read, update, and delete demoobjects via the rest api.

@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+
+<HTML>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Demo Objects</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css" />
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+
+<script type="text/javascript">
+var activeObjectId;
+var initList = function () {
+  $('#objectlist').empty(); //clear list
+  $.getJSON('/demoObjects', function(data) {
+    $.each(data, function(index, object) {
+      $('<li id="listObj'+object.id+'"><a href="#showobject" data-transition="slidedown"><h3 id="listObj'+object.id+'name">'+object.name+'</h3></a><a href="#home" id="del'+object.id+'" data-role="button" data-icon="delete" data-theme="a" ></li>').appendTo('#objectlist');
+      $('#listObj'+object.id).click(function(event) {
+      	activeObjectId=object.id;
+      	//initShow();
+      });
+      $('#del'+object.id).click(function(event) {
+		$.ajax({
+        type: "DELETE",
+        url: "/demoObjects/"+object.id,
+        cache: false,
+        //data: JSON.stringify(demoObj),
+        contentType: "application/json; charset=utf-8",
+        success: function(data) {
+			initList();
+        },
+        error: function() { 
+          // server couldn't be reached or other error 
+        }
+        });
+      });
+    });
+    $('#objectlist').listview('refresh'); //tells list to rebuild itself with our new items
+  });
+};
+var initShow = function() {
+  if(activeObjectId) {
+	  var idUrl = "/demoObjects/"+activeObjectId;
+	  $.getJSON(idUrl, function(data) {
+	    $('#name').val(data.name);
+	    $('#id').val(data.id);
+	  });
+  }else{
+    //empty everything out in case there is stale data
+  	$('#name').val("");
+  	$('#id').val("");
+  }
+};
+//the jquery mobile recommendation is to use live('pageinit') instead of document.ready
+$( '#home' ).live( 'pagebeforeshow',function(event) {
+  initList();
+});
+
+$('#showobject').live('pagebeforeshow',function(event) {
+  initShow();
+});  
+$( '#showobject' ).live( 'pageinit',function(event) {
+  //initShow();
+  $("#createObj").click(function(event) {
+     activeObjectId = null;
+     //initShow();
+  });
+  $("#submit").click(function(event) {
+    event.preventDefault();
+    var demoObj;
+    var url;
+    var httpMethod;
+    if(activeObjectId) {
+    	url = "/demoObjects/"+$('#id').val();
+    	httpMethod = "PUT";
+    	demoObj = { id : Number($('#id').val()), name: $('#name').val() };
+    }else{
+    	url = "/demoObjects/";
+    	httpMethod = "POST"
+    	demoObj = { id : 0, name: $('#name').val() };
+    }
+    $.ajax({
+        type: httpMethod,
+        url: url,
+        cache: false,
+        data: JSON.stringify(demoObj),
+        contentType: "application/json; charset=utf-8",
+        success: function(data) {
+            //TODO: consolidate this with pageload
+            activeObjectId = data.id;
+		    $('#name').val(data.name);
+	        $('#id').val(data.id);
+        },
+        error: function() { 
+          // server couldn't be reached or other error 
+        }
+    });
+  });
+});
+
+</script>
+</head>
+
+<body>
+
+<div data-role="page" id="home" data-theme="c">
+	<div data-role="header">
+	<h1>Demo Objects</h1>
+	</div>
+	<div data-role="content">
+		<div id="branding">
+		<h1>Demo Objects </h1>
+		</div>
+		<div class="choice_list">
+		<ul data-role="listview" data-inset="true" id="objectlist"/>
+		</div>
+		<a href="#showobject" id="createObj" data-role="button" data-icon="plus" data-theme="a" >Create New Demo Object</a> 
+	</div>
+</div><!-- /page -->
+
+
+<div id="showobject" data-role="page" data-add-back-btn="true">
+  <div data-role="header"><h1> Demo Object</h1></div>
+  <div data-role="content">
+	<!-- turn off default ajax so we can use json -->
+	<form id="objectform" data-ajax="false">
+	<label for="basic">Name:</label>
+	<input type="text" readonly name="id" id="id"/>
+	<input type="text" name="name" id="name"/>
+	<button id="submit" type="submit" data-theme="a" data-icon="check">Submit</button>
+	</form>
+  </div>
+</div><!-- /page -->
+
+</body>
+
+</HTML>
